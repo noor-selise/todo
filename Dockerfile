@@ -13,24 +13,26 @@ ARG VITE_BLOCKS_API_URL
 ARG VITE_BLOCKS_PROJECT_KEY
 ARG VITE_BLOCKS_X_BLOCKS_KEY
 ARG VITE_BLOCKS_APP_DOMAIN
-ARG VITE_BLOCKS_OIDC_URL=https://iam.seliseblocks.com
+ARG VITE_BLOCKS_OIDC_URL
 ARG VITE_BLOCKS_OIDC_CLIENT_ID
-ARG VITE_BLOCKS_OIDC_SCOPE="openid profile"
+ARG VITE_BLOCKS_OIDC_SCOPE
 ARG VITE_BLOCKS_REDIRECT_URI
-ARG VITE_BLOCKS_HOSTED_LOGIN=true
+ARG VITE_BLOCKS_HOSTED_LOGIN
 
-ENV VITE_BLOCKS_API_URL=${VITE_BLOCKS_API_URL}
-ENV VITE_BLOCKS_PROJECT_KEY=${VITE_BLOCKS_PROJECT_KEY}
-ENV VITE_BLOCKS_X_BLOCKS_KEY=${VITE_BLOCKS_X_BLOCKS_KEY}
-ENV VITE_BLOCKS_APP_DOMAIN=${VITE_BLOCKS_APP_DOMAIN}
-ENV VITE_BLOCKS_OIDC_URL=${VITE_BLOCKS_OIDC_URL}
-ENV VITE_BLOCKS_OIDC_CLIENT_ID=${VITE_BLOCKS_OIDC_CLIENT_ID}
-ENV VITE_BLOCKS_OIDC_SCOPE=${VITE_BLOCKS_OIDC_SCOPE}
-ENV VITE_BLOCKS_REDIRECT_URI=${VITE_BLOCKS_REDIRECT_URI}
-ENV VITE_BLOCKS_HOSTED_LOGIN=${VITE_BLOCKS_HOSTED_LOGIN}
-
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx vite build --mode "${ci_build}" \
-  && node scripts/write-release-env.mjs "${ci_build}"
+# Docker puts every declared ARG into this RUN's environment even when no
+# matching --build-arg was passed (as an empty string) -- and both Vite's
+# loadEnv and scripts/write-release-env.mjs give a *defined* process.env
+# value priority over the checked-in .env.<mode> file, blank or not. Left
+# alone, an unset build arg would silently shadow .env.<mode> with "".
+# Clear any blank one back to fully unset first, so a real --build-arg still
+# wins but an absent one correctly falls through to .env.<mode>.
+RUN for v in VITE_BLOCKS_API_URL VITE_BLOCKS_PROJECT_KEY VITE_BLOCKS_X_BLOCKS_KEY \
+      VITE_BLOCKS_APP_DOMAIN VITE_BLOCKS_OIDC_URL VITE_BLOCKS_OIDC_CLIENT_ID \
+      VITE_BLOCKS_OIDC_SCOPE VITE_BLOCKS_REDIRECT_URI VITE_BLOCKS_HOSTED_LOGIN; do \
+      eval "[ -n \"\${$v:-}\" ]" || eval "unset $v"; \
+    done; \
+    NODE_OPTIONS="--max-old-space-size=4096" npx vite build --mode "${ci_build}" \
+    && node scripts/write-release-env.mjs "${ci_build}"
 
 FROM nginxinc/nginx-unprivileged:1.29-alpine
 
