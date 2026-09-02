@@ -1,0 +1,9 @@
+.git
+.codex
+.claude
+app/node_modules
+app/dist
+app/.cert
+app/.env
+app/.env.local
+app/.env.*.local
