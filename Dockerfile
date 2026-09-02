@@ -8,7 +8,7 @@ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 COPY app/ .
 
-ARG ci_build=dev
+ARG ci_build=test
 ARG VITE_BLOCKS_API_URL
 ARG VITE_BLOCKS_PROJECT_KEY
 ARG VITE_BLOCKS_X_BLOCKS_KEY
