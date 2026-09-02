@@ -1,0 +1,33 @@
+{
+  "policies": [],
+  "security": [
+    {
+      "schemaId": "98a99031-b5f5-4ecc-9e0e-01022c199be3",
+      "operation": 0,
+      "accessLevel": 1,
+      "policyType": 0,
+      "fieldNames": []
+    },
+    {
+      "schemaId": "98a99031-b5f5-4ecc-9e0e-01022c199be3",
+      "operation": 1,
+      "accessLevel": 1,
+      "policyType": 0,
+      "fieldNames": []
+    },
+    {
+      "schemaId": "98a99031-b5f5-4ecc-9e0e-01022c199be3",
+      "operation": 2,
+      "accessLevel": 1,
+      "policyType": 0,
+      "fieldNames": []
+    },
+    {
+      "schemaId": "98a99031-b5f5-4ecc-9e0e-01022c199be3",
+      "operation": 3,
+      "accessLevel": 1,
+      "policyType": 0,
+      "fieldNames": []
+    }
+  ]
+}
